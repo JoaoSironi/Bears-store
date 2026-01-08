@@ -6,7 +6,9 @@ function validateCustomer(name) {
 
 function validateContact(contact) {
   const errors = [];
-  if (!contact || !/^[\d+\-\s()]{8,}$/.test(String(contact))) errors.push('Contato inválido (mínimo 8 dígitos)');
+  if (!contact || !/^\(\d{2}\)\s\d\s\d{6}\d{2}$/.test(String(contact).trim())) {
+    errors.push('Contato inválido (formato: (xx) x xxxxxxxx)');
+  }
   return errors;
 }
 

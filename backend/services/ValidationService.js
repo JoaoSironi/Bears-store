@@ -10,8 +10,8 @@ function validateCustomerName(name) {
 
 function validateContact(contact) {
   const errors = [];
-  if (!contact || typeof contact !== 'string' || !/^[\d+\-\s()]{8,}$/.test(contact.trim())) {
-    errors.push('Contato inválido (mínimo 8 dígitos, apenas números/caracteres + - () allowed)');
+  if (!contact || typeof contact !== 'string' || !/^\(\d{2}\)\s\d\s\d{6}\d{2}$/.test(contact.trim())) {
+    errors.push('Contato inválido (formato: (xx) x xxxxxxxx)');
   }
   return errors;
 }
