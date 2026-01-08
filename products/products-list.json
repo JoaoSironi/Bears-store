@@ -1,0 +1,76 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "name": "Camisa de Torcedor Preta",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Camisa-torcedor-preta.jpg",
+            "availableSizes": ["M"],
+            "availablePersonalization": true,
+            "price": 29.99
+        },
+        {
+            "id": 2,
+            "name": "Camisa de Torcedor Vermelha",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Camisa-torcedor-vermelha.jpg",
+            "availableSizes": ["M", "G"],
+            "availablePersonalization": false,
+            "price": 34.99
+        },
+        {
+            "id": 3,
+            "name": "Camisa de Torcedor Polar",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Camisa-torcedor-polar.jpg",
+            "availableSizes": ["G"],
+            "availablePersonalization": true,
+            "price": 39.99
+        },
+        {
+            "id": 4,
+            "name": "Camisa de Passeio",
+            "imagePath": "https://github.com/JoaoSironi/Bears-store/blob/main/img/products/Camisa-de-passeio.png",
+            "availableSizes": ["G"],
+            "availablePersonalization": true,
+            "price": 39.99
+        },
+        {
+            "id": 5,
+            "name": "Regata Polar",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Regata-polar.jpg",
+            "availableSizes": ["M", "G"],
+            "availablePersonalization": false,
+            "price": 44.99
+        },
+        {
+            "id": 6,
+            "name": "Regata Preta",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Regata-preta.jpg",
+            "availableSizes": ["M", "G"],
+            "availablePersonalization": false,
+            "price": 44.99
+        },
+        {
+            "id": 7,
+            "name": "Jersey Preta",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Jersey-jogo-preta.jpg",
+            "availableSizes": ["M", "G"],
+            "availablePersonalization": false,
+            "price": 44.99
+        },
+        {
+            "id": 8,
+            "name": "Jersey Vermelha",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Jersey-jogo-vermelha.jpg",
+            "availableSizes": ["M", "G"],
+            "availablePersonalization": false,
+            "price": 44.99
+        },
+        {
+            "id": 9,
+            "name": "Jersey Polar",
+            "imagePath": "C:\\Repository\\Bears-store\\img\\products\\Jersey-jogo-polar.jpg",
+            "availableSizes": ["M", "G"],
+            "availablePersonalization": false,
+            "price": 44.99
+        }
+    ]
+}
