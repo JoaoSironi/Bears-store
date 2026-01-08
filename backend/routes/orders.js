@@ -1,27 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
+const OrderService = require('../services/OrderService');
+const ApiError = require('../services/ApiError');
 
-// criar pedido
 router.post('/', async (req, res) => {
   try {
-    const { products, total, customerName, contactNumber } = req.body;
-    if (!products || !Array.isArray(products) || products.length === 0) {
-      return res.status(400).json({ error: 'Produtos obrigatórios' });
-    }
-    const order = new Order({ products, total, customerName, contactNumber });
-    await order.save();
+    const order = await OrderService.createOrder(req.body);
     res.status(201).json(order);
   } catch (err) {
     console.error(err);
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ error: err.message });
+    }
     res.status(500).json({ error: 'Erro ao salvar pedido' });
   }
 });
 
-// listar pedidos (opcional)
 router.get('/', async (req, res) => {
-  const orders = await Order.find().sort({ createdAt: -1 }).limit(50);
-  res.json(orders);
+  try {
+    const orders = await OrderService.getOrders();
+    res.json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao buscar pedidos' });
+  }
 });
 
 module.exports = router;

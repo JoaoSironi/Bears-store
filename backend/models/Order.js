@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const ProductSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  size: { type: String, enum: ['P','M','G','GG',''], default: '' }, // validação de tamanhos
+  size: { type: String, default: '' }, // validação de tamanhos
   personalization: { type: String, maxlength: 150, default: '' }, // limite de caracteres
   quantity: { type: Number, required: true, min: 1 },
   price: { type: Number, required: true, min: 0 },

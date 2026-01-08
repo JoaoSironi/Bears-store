@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import ProductCard from './components/ProductCard';
 import Footer from './components/Footer';
+import ProductService from './services/ProductService';
+import OrderService from './services/OrderService';
+import ValidationService from './services/ValidationService';
 
 export default function App(){
   const [items, setItems] = useState([]);
@@ -16,24 +19,11 @@ export default function App(){
       setLoading(true);
       setFetchError('');
       try {
-        const res = await fetch('http://localhost:4000/api/products');
-        if (!res.ok) throw new Error(`Erro ${res.status}`);
-        const data = await res.json();
-        // normaliza resposta: aceita [{...}] ou { products: [...] }
-        const products = Array.isArray(data) ? data : (Array.isArray(data.products) ? data.products : []);
+        const products = await ProductService.getProducts();
         setProductsBase(products);
-        setItems(products.map(p => ({
-          ...p,
-          availableSizes: Array.isArray(p.availableSizes) ? p.availableSizes : [],
-          // treat undefined as allowed (true) unless explicitly false
-          availablePersonalization: p.availablePersonalization === false ? false : true,
-          size: '',
-          personalization: '',
-          quantity: 0,
-          subtotal: 0
-        })));
+        setItems(products.map(p => ({ ...p, size: '', personalization: '', quantity: 0, subtotal: 0 })));
       } catch (e) {
-        setFetchError('Falha ao carregar produtos');
+        setFetchError(e.message || 'Falha ao carregar produtos');
         console.error(e);
       } finally {
         setLoading(false);
@@ -62,31 +52,19 @@ export default function App(){
       return;
     }
     const body = { products: selected, total, customerName, contactNumber };
+    const validation = ValidationService.validateOrder(body);
+    if (!validation.valid) {
+      alert('Validação: ' + validation.errors.join('; '));
+      return;
+    }
     try {
-      const res = await fetch('http://localhost:4000/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-      if (res.ok) {
-        alert('Pedido enviado com sucesso!');
-        // reset com base nos produtos carregados do servidor
-        setItems(productsBase.map(p => ({
-          ...p,
-          availableSizes: Array.isArray(p.availableSizes) ? p.availableSizes : [],
-          availablePersonalization: p.availablePersonalization === false ? false : true,
-          size: '',
-          personalization: '',
-          quantity: 0,
-          subtotal: 0
-        })));
-        setCustomerName(''); setContactNumber('');
-      } else {
-        const err = await res.json();
-        alert('Erro: ' + (err.error || res.statusText));
-      }
+      console.log('Enviando pedido', body);
+      await OrderService.createOrder(body);
+      alert('Pedido enviado com sucesso!');
+      setItems(productsBase.map(p => ({ ...p, size: '', personalization: '', quantity: 0, subtotal: 0 })));
+      setCustomerName(''); setContactNumber('');
     } catch (e) {
-      alert('Erro ao conectar com servidor');
+      alert('Erro ao enviar pedido: ' + (e.message || 'Erro de rede'));
     }
   };
 

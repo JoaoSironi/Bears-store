@@ -6,7 +6,7 @@ export default function ProductCard({ product, onChange }) {
     '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="120"><rect width="100%" height="100%" fill="#eee"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#666" font-size="16">Sem imagem</text></svg>'
   );
 
-  console.log(product.imagePath);
+  console.log(product);
 
   return (
     <div className="card">
@@ -15,7 +15,7 @@ export default function ProductCard({ product, onChange }) {
           className="card-image"
           src={product.imagePath}
           alt={product.name}
-          onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = fallbackSvg; }}
+          // onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = fallbackSvg; }}
         />
       ) : (
         <div className="image-placeholder">Sem imagem</div>
