@@ -1,15 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import Header from './components/Header';
 import ProductCard from './components/ProductCard';
+import Cart from './components/Cart';
+import CartModal from './components/CartModal';
 import Footer from './components/Footer';
 import ProductService from './services/ProductService';
 import OrderService from './services/OrderService';
 import ValidationService from './services/ValidationService';
 
 export default function App(){
-  const [items, setItems] = useState([]);
-  const [productsBase, setProductsBase] = useState([]); // lista bruta do servidor
+  const [products, setProducts] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState('');
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
 
   const [customerName, setCustomerName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -19,9 +23,8 @@ export default function App(){
       setLoading(true);
       setFetchError('');
       try {
-        const products = await ProductService.getProducts();
-        setProductsBase(products);
-        setItems(products.map(p => ({ ...p, size: '', personalization: '', quantity: 0, subtotal: 0 })));
+        const productList = await ProductService.getProducts();
+        setProducts(productList);
       } catch (e) {
         setFetchError(e.message || 'Falha ao carregar produtos');
         console.error(e);
@@ -32,8 +35,32 @@ export default function App(){
     load();
   }, []);
 
-  const updateItem = (idx, changes) => {
-    setItems(prev => {
+  const addToCart = (product, size, personalization, quantity) => {
+    // buscar item existente com mesma config
+    const existing = cartItems.findIndex(
+      item => item.id === product.id && item.size === size && item.personalization === personalization
+    );
+    if (existing >= 0) {
+      // atualizar quantidade
+      updateCartItem(existing, { quantity: cartItems[existing].quantity + quantity });
+    } else {
+      // adicionar novo
+      setCartItems(prev => [...prev, {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        size,
+        personalization,
+        quantity,
+        subtotal: quantity * product.price,
+        availableSizes: product.availableSizes,
+        availablePersonalization: product.availablePersonalization
+      }]);
+    }
+  };
+
+  const updateCartItem = (idx, changes) => {
+    setCartItems(prev => {
       const copy = [...prev];
       copy[idx] = { ...copy[idx], ...changes };
       copy[idx].subtotal = (copy[idx].quantity || 0) * (copy[idx].price || 0);
@@ -41,12 +68,16 @@ export default function App(){
     });
   };
 
-  const total = useMemo(() => items.reduce((s,i)=> s + (i.subtotal||0), 0), [items]);
+  const removeCartItem = (idx) => {
+    setCartItems(prev => prev.filter((_, i) => i !== idx));
+  };
+
+  const total = useMemo(() => cartItems.reduce((s, i) => s + (i.subtotal || 0), 0), [cartItems]);
 
   const sendOrder = async () => {
-    const selected = items.filter(i => i.quantity > 0).map(i => ({
+    const selected = cartItems.map(i => ({
       name: i.name, size: i.size, personalization: i.personalization, quantity: i.quantity, price: i.price, subtotal: i.subtotal
-    }));
+     }));
     if (selected.length === 0) {
       alert('Selecione ao menos um produto.');
       return;
@@ -61,7 +92,7 @@ export default function App(){
       console.log('Enviando pedido', body);
       await OrderService.createOrder(body);
       alert('Pedido enviado com sucesso!');
-      setItems(productsBase.map(p => ({ ...p, size: '', personalization: '', quantity: 0, subtotal: 0 })));
+      setCartItems([]);
       setCustomerName(''); setContactNumber('');
     } catch (e) {
       alert('Erro ao enviar pedido: ' + (e.message || 'Erro de rede'));
@@ -70,21 +101,32 @@ export default function App(){
 
   return (
     <div className="page">
-      <header className="header">
-        <div className="logo">LOJINHA DO BEARS</div>
-      </header>
+      <Header cartCount={cartItems.length} onCartClick={() => setIsCartModalOpen(true)} />
 
-      <main className="grid">
+      <CartModal
+        isOpen={isCartModalOpen}
+        items={cartItems}
+        onClose={() => setIsCartModalOpen(false)}
+        onUpdateItem={updateCartItem}
+        onRemoveItem={removeCartItem}
+        total={total}
+        customerName={customerName}
+        contactNumber={contactNumber}
+        onCustomerChange={setCustomerName}
+        onContactChange={setContactNumber}
+        onSendOrder={sendOrder}
+      />
+
+      <main className="grid" style={{ marginTop: 73 }}>
         {loading && <div>Carregando produtos...</div>}
         {!loading && fetchError && <div>{fetchError}</div>}
-        {!loading && !fetchError && items.length === 0 && <div>Nenhum produto disponível.</div>}
-        {!loading && !fetchError && items.map((p, idx) => (
-          <ProductCard key={p.id} product={p} onChange={(changes)=> updateItem(idx, changes)} />
+        {!loading && !fetchError && products.length === 0 && <div>Nenhum produto disponível.</div>}
+        {!loading && !fetchError && products.map((p) => (
+          <ProductCard key={p.id} product={p} onAddToCart={addToCart} />
         ))}
       </main>
 
-      <Footer total={total} customerName={customerName} contactNumber={contactNumber}
-        onCustomerChange={(v)=>setCustomerName(v)} onContactChange={(v)=>setContactNumber(v)} onSend={sendOrder} />
+      {/* <Cart items={cartItems} onUpdateItem={updateCartItem} onRemoveItem={removeCartItem} total={total} /> */}
     </div>
   );
 }
