@@ -4,7 +4,7 @@ function toAbsoluteImagePath(raw) {
   if (!raw) return '';
   if (raw.startsWith('http')) return raw;
   const clean = raw.replace(/^\/+/, '');
-  return `${ApiClient ? 'http://localhost:4000' : ''}/${clean}`.replace(/\/+/g, '/').replace('http:/', 'http://');
+  return `${ApiClient ? 'https://bears-store.onrender.com' : ''}/${clean}`.replace(/\/+/g, '/').replace('http:/', 'http://');
 }
 
 function normalize(product) {
@@ -21,7 +21,7 @@ function normalize(product) {
 }
 
 async function getProducts() {
-  const data = await ApiClient.get('/api/products');
+  const data = await ApiClient.get('/products');
   const list = Array.isArray(data) ? data : (Array.isArray(data && data.products) ? data.products : []);
   return list.map(normalize);
 }
