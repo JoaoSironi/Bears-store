@@ -1,14 +1,18 @@
-const express = require('express');
-const ordersRouter = require('./routes/orders');
-const productsRouter = require('./routes/products');
+import { Router } from "express";
+import ordersController from './controllers/orders';
+import productsController from './controllers/products';
 
-module.exports = function registerRoutes(app) {
-  app.use(express.json({ limit: '10mb' }));
+const routes = new Router();
 
-  app.get('/', (req, res) => res.json({ ok: true, version: '1.0' }));
+    routes.get('/', (req, res) => res.json({ ok: true, version: '1.0' }));
 
-  const api = express.Router();
-  api.use('/orders', ordersRouter);
-  api.use('/products', productsRouter);
-  app.use('/api', api);
-};
+    //Orders routes
+    routes.post('/orders', ordersController.createOrder);
+    routes.get('/orders', ordersController.getOrders);
+
+    //Products routes
+    routes.get('/products', productsController.getProducts);
+    routes.get('/products/:id', productsController.getProductById);
+
+export default routes;
+
