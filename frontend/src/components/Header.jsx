@@ -1,6 +1,6 @@
 import React from 'react';
 import CartBadge from './CartBadge';
-import './Header.css';
+import '../css/Header.css';
 
 export default function Header({ cartCount, onCartClick }) {
   return (

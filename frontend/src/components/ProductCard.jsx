@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ProductCard.css';
+import '../css/ProductCard.css';
 
 export default function ProductCard({ product, onAddToCart }) {
   const [size, setSize] = useState('');

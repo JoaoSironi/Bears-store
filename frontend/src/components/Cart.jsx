@@ -1,5 +1,5 @@
 import React from 'react';
-import './Cart.css';
+import '../css/Cart.css';
 
 export default function Cart({ items, onUpdateItem, onRemoveItem, total }) {
   return (

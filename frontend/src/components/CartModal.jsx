@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './CartModal.css';
+import '../css/CartModal.css';
 
 function formatPhone(value) {
   const digits = value.replace(/\D/g, '');

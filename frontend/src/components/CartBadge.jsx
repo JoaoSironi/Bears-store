@@ -1,5 +1,5 @@
 import React from 'react';
-import './CartBadge.css';
+import '../css/CartBadge.css';
 
 export default function CartBadge({ count, onClick }) {
   return (
